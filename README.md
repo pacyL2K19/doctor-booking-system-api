@@ -81,6 +81,12 @@ This API allows doctors to create appointment slots with various recurrence opti
 
 ## API Documentation
 
+The API documentation is available at http://localhost:3000/api when the application is running. This interactive documentation is powered by Swagger UI and allows you to:
+
+- View all available endpoints
+- See request and response schemas
+- Test endpoints directly from the browser
+
 ### Health Check
 
 - **GET /health**
@@ -90,6 +96,10 @@ This API allows doctors to create appointment slots with various recurrence opti
 
 - **POST /doctors**
   - Create a new doctor
+- **GET /doctors**
+  - Get all doctors
+- **GET /doctors/{id}**
+  - Get a doctor by ID
 - **GET /doctors/{doctorId}/slots**
   - Get all slots for a doctor
 - **POST /doctors/{doctorId}/slots**
