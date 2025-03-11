@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, MoreThanOrEqual, LessThanOrEqual } from 'typeorm';
 import { Slot, SlotStatus } from '../../common/entities/slot.entity';
 import {
   RecurrenceRule,
@@ -221,8 +221,8 @@ export class SlotsService {
       where: {
         doctor_id: doctorId,
         status: SlotStatus.AVAILABLE,
-        start_time: { $gte: startOfDay },
-        end_time: { $lte: endOfDay },
+        start_time: MoreThanOrEqual(startOfDay),
+        end_time: LessThanOrEqual(endOfDay),
       },
       order: { start_time: 'ASC' },
     });
