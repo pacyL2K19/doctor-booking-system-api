@@ -26,37 +26,42 @@ This API allows doctors to create appointment slots with various recurrence opti
 
 - Docker and Docker Compose
 - Node.js (for local development)
-- Yarn or npm (for local development)
+- Yarn or `npm` (for local development)
 
 ### Running with Docker
 
 1. Clone the repository:
+
    ```bash
    git clone <repository-url>
    cd doctor-booking-system-api
    ```
 
 2. Start the application with Docker Compose:
+
    ```bash
    docker-compose up --build
    ```
 
-3. The API will be available at http://localhost:3000
+3. The API will be available at <http://localhost:3000>
 
 ### Running Locally
 
 1. Clone the repository:
+
    ```bash
    git clone <repository-url>
    cd doctor-booking-system-api
    ```
 
 2. Install dependencies:
+
    ```bash
    yarn install
    ```
 
 3. Create a `.env` file with the following content:
+
    ```
    DATABASE_HOST=localhost
    DATABASE_PORT=5432
@@ -67,11 +72,12 @@ This API allows doctors to create appointment slots with various recurrence opti
    ```
 
 4. Start the application:
+
    ```bash
    yarn start:dev
    ```
 
-5. The API will be available at http://localhost:3000
+5. The API will be available at <http://localhost:3000>
 
 ## API Documentation
 
