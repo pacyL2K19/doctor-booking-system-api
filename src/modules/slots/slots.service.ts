@@ -4,7 +4,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource, MoreThanOrEqual, LessThanOrEqual } from 'typeorm';
+import {
+  Repository,
+  DataSource,
+  MoreThanOrEqual,
+  LessThanOrEqual,
+} from 'typeorm';
 import { Slot, SlotStatus } from '../../common/entities/slot.entity';
 import {
   RecurrenceRule,
@@ -33,8 +38,8 @@ export class SlotsService {
     doctorId: string,
     createSlotsDto: CreateSlotsDto,
   ): Promise<SlotsResponseDto> {
-    // Validate doctor exists
-    const doctor = await this.doctorsService.findOne(doctorId);
+    // Validate doctor exists - this will throw NotFoundException if doctor doesn't exist
+    await this.doctorsService.findOne(doctorId);
 
     // Parse dates
     const startTime = new Date(createSlotsDto.start_time);
@@ -228,6 +233,11 @@ export class SlotsService {
     });
   }
 
+  /**
+   * Find a slot by its ID
+   * @param slotId The ID of the slot to find
+   * @returns The slot if found, otherwise throws NotFoundException
+   */
   async findSlotById(slotId: string): Promise<Slot> {
     const slot = await this.slotsRepository.findOne({
       where: { id: slotId },

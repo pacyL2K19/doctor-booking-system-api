@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DoctorsModule } from './modules/doctors/doctors.module';
 import { SlotsModule } from './modules/slots/slots.module';
+import { BookingsModule } from './modules/bookings/bookings.module';
 
 @Module({
   imports: [
@@ -22,11 +23,12 @@ import { SlotsModule } from './modules/slots/slots.module';
         password: configService.get('DATABASE_PASSWORD', 'postgres'),
         database: configService.get('DATABASE_NAME', 'doctor_booking'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true, // Only for development, disable in production
+        synchronize: true, // Only for development, to disable in production
       }),
     }),
     DoctorsModule,
     SlotsModule,
+    BookingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

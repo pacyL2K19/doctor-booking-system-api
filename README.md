@@ -33,7 +33,7 @@ This API allows doctors to create appointment slots with various recurrence opti
 1. Clone the repository:
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/pacyL2K19/doctor-booking-system-api.git
    cd doctor-booking-system-api
    ```
 
@@ -50,7 +50,7 @@ This API allows doctors to create appointment slots with various recurrence opti
 1. Clone the repository:
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/pacyL2K19/doctor-booking-system-api.git
    cd doctor-booking-system-api
    ```
 
@@ -81,7 +81,7 @@ This API allows doctors to create appointment slots with various recurrence opti
 
 ## API Documentation
 
-The API documentation is available at http://localhost:3000/api when the application is running. This interactive documentation is powered by Swagger UI and allows you to:
+The API documentation is available at <http://localhost:3000/api> when the application is running. This interactive documentation is powered by Swagger UI and allows you to:
 
 - View all available endpoints
 - See request and response schemas
