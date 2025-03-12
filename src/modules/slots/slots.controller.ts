@@ -19,11 +19,11 @@ import {
   ApiParam,
   ApiQuery,
   ApiBody,
-  ApiResponse,
-  ApiCreatedResponse,
-  ApiBadRequestResponse,
-  ApiNotFoundResponse,
 } from '@nestjs/swagger';
+import {
+  ApiStandardResponse,
+  ApiStandardErrorResponse,
+} from '../../common/decorators/api-standard-response.decorator';
 
 @ApiTags('slots')
 @Controller()
@@ -40,12 +40,19 @@ export class SlotsController {
     format: 'uuid',
   })
   @ApiBody({ type: CreateSlotsDto })
-  @ApiCreatedResponse({
+  @ApiStandardResponse({
+    status: 201,
     description: 'The slots have been successfully created.',
     type: SlotsResponseDto,
   })
-  @ApiBadRequestResponse({ description: 'Invalid input data.' })
-  @ApiNotFoundResponse({ description: 'Doctor not found.' })
+  @ApiStandardErrorResponse({
+    status: 400,
+    description: 'Invalid input data.',
+  })
+  @ApiStandardErrorResponse({
+    status: 404,
+    description: 'Doctor not found.',
+  })
   async createSlots(
     @Param('doctorId') doctorId: string,
     @Body() createSlotsDto: CreateSlotsDto,
@@ -61,12 +68,16 @@ export class SlotsController {
     type: 'string',
     format: 'uuid',
   })
-  @ApiResponse({
+  @ApiStandardResponse({
     status: 200,
-    description: 'List of all slots for the doctor',
-    type: [Slot],
+    description: 'List of all slots for the specified doctor',
+    type: Slot,
+    isArray: true,
   })
-  @ApiNotFoundResponse({ description: 'Doctor not found.' })
+  @ApiStandardErrorResponse({
+    status: 404,
+    description: 'Doctor not found.',
+  })
   async findSlotsByDoctor(
     @Param('doctorId') doctorId: string,
   ): Promise<Slot[]> {
@@ -90,14 +101,20 @@ export class SlotsController {
     required: true,
     example: '2023-01-01',
   })
-  @ApiResponse({
+  @ApiStandardResponse({
     status: 200,
     description:
       'List of all available slots for the doctor on the specified date',
     type: AvailableSlotsResponseDto,
   })
-  @ApiBadRequestResponse({ description: 'Invalid date format.' })
-  @ApiNotFoundResponse({ description: 'Doctor not found.' })
+  @ApiStandardErrorResponse({
+    status: 400,
+    description: 'Invalid date format.',
+  })
+  @ApiStandardErrorResponse({
+    status: 404,
+    description: 'Doctor not found.',
+  })
   async findAvailableSlotsByDoctor(
     @Param('doctorId') doctorId: string,
     @Query('date') date: string,
