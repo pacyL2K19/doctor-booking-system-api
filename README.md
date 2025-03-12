@@ -1,73 +1,119 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Doctor Booking System API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+A NestJS-based API for managing doctor appointment slots and bookings.
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This API allows doctors to create appointment slots with various recurrence options, and patients to book available slots.
 
-## Installation
+## Features
 
-```bash
-$ yarn install
-```
+- Doctor management
+- Slot creation with recurrence options
+- Appointment booking
+- Viewing available slots and booked appointments
 
-## Running the app
+## Technologies Used
 
-```bash
-# development
-$ yarn run start
+- NestJS
+- TypeORM
+- PostgreSQL
+- Docker
 
-# watch mode
-$ yarn run start:dev
+## Setup Instructions
 
-# production mode
-$ yarn run start:prod
-```
+### Prerequisites
 
-## Test
+- Docker and Docker Compose
+- Node.js (for local development)
+- Yarn or `npm` (for local development)
 
-```bash
-# unit tests
-$ yarn run test
+### Running with Docker
 
-# e2e tests
-$ yarn run test:e2e
+1. Clone the repository:
 
-# test coverage
-$ yarn run test:cov
-```
+   ```bash
+   git clone https://github.com/pacyL2K19/doctor-booking-system-api.git
+   cd doctor-booking-system-api
+   ```
 
-## Support
+2. Start the application with Docker Compose:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+   ```bash
+   docker-compose up --build
+   ```
 
-## Stay in touch
+3. The API will be available at <http://localhost:3000>
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Running Locally
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/pacyL2K19/doctor-booking-system-api.git
+   cd doctor-booking-system-api
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   yarn install
+   ```
+
+3. Create a `.env` file with the following content:
+
+   ```
+   DATABASE_HOST=localhost
+   DATABASE_PORT=5432
+   DATABASE_USER=postgres
+   DATABASE_PASSWORD=postgres
+   DATABASE_NAME=doctor_booking
+   PORT=3000
+   ```
+
+4. Start the application:
+
+   ```bash
+   yarn start:dev
+   ```
+
+5. The API will be available at <http://localhost:3000>
+
+## API Documentation
+
+The API documentation is available at <http://localhost:3000/api> when the application is running. This interactive documentation is powered by Swagger UI and allows you to:
+
+- View all available endpoints
+- See request and response schemas
+- Test endpoints directly from the browser
+
+### Health Check
+
+- **GET /health**
+  - Returns the health status of the API
+
+### Doctor Endpoints
+
+- **POST /doctors**
+  - Create a new doctor
+- **GET /doctors**
+  - Get all doctors
+- **GET /doctors/{id}**
+  - Get a doctor by ID
+- **GET /doctors/{doctorId}/slots**
+  - Get all slots for a doctor
+- **POST /doctors/{doctorId}/slots**
+  - Create slots for a doctor
+- **GET /doctors/{doctorId}/bookings**
+  - Get all bookings for a doctor
+- **GET /doctors/{doctorId}/available_slots**
+  - Get all available slots for a doctor
+
+### Slot Endpoints
+
+- **POST /slots/{slotId}/book**
+  - Book a slot
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+This project is licensed under the MIT License.
