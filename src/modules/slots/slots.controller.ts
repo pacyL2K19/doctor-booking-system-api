@@ -12,6 +12,7 @@ import { SlotsService } from './slots.service';
 import { CreateSlotsDto } from '../../common/dtos/create-slots.dto';
 import { SlotsResponseDto } from '../../common/dtos/slots-response.dto';
 import { Slot } from '../../common/entities/slot.entity';
+import { AvailableSlotsResponseDto } from '../../common/dtos/available-slots-response.dto';
 import {
   ApiTags,
   ApiOperation,
@@ -87,19 +88,20 @@ export class SlotsController {
     description: 'The date to check for available slots (YYYY-MM-DD)',
     type: 'string',
     required: true,
+    example: '2023-01-01',
   })
   @ApiResponse({
     status: 200,
     description:
       'List of all available slots for the doctor on the specified date',
-    type: [Slot],
+    type: AvailableSlotsResponseDto,
   })
   @ApiBadRequestResponse({ description: 'Invalid date format.' })
   @ApiNotFoundResponse({ description: 'Doctor not found.' })
   async findAvailableSlotsByDoctor(
     @Param('doctorId') doctorId: string,
     @Query('date') date: string,
-  ): Promise<Slot[]> {
+  ): Promise<AvailableSlotsResponseDto> {
     return this.slotsService.findAvailableSlotsByDoctor(doctorId, date);
   }
 }
