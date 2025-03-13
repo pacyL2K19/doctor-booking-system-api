@@ -23,7 +23,9 @@ import { BookingsModule } from './modules/bookings/bookings.module';
         password: configService.get('DATABASE_PASSWORD', 'postgres'),
         database: configService.get('DATABASE_NAME', 'doctor_booking'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true, // Only for development, to disable in production
+        synchronize: true,
+        // Use the custom UUID generator
+        entitySkipConstructor: true,
       }),
     }),
     DoctorsModule,

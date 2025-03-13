@@ -1,25 +1,50 @@
 version: '3.8'
 
 services:
-  app:
-    build: .
+  # Development service
+  app-dev:
+    build:
+      context: .
+      target: development
     ports:
       - "3000:3000"
     environment:
+      - NODE_ENV=development
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
       - DATABASE_USER=postgres
       - DATABASE_PASSWORD=postgres
       - DATABASE_NAME=doctor_booking
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     volumes:
       - ./:/app
       - /app/node_modules
     command: yarn start:dev
+    restart: unless-stopped
+    
+  # Production service
+  app:
+    build:
+      context: .
+      target: production
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=postgres
+      - DATABASE_NAME=doctor_booking
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
 
   db:
-    image: postgres:13
+    image: postgres:16
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -29,6 +54,11 @@ services:
       - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
-  db-data: 
+  db-data:

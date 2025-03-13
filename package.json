@@ -17,7 +17,12 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "docker:dev": "docker-compose up app-dev",
+    "docker:prod": "docker-compose up app",
+    "docker:rebuild": "bash scripts/rebuild.sh",
+    "setup": "bash scripts/setup-local-dev.sh",
+    "http-tests": "echo \"Available HTTP tests: http-tests/test-health.http, http-tests/test-bookings-pagination.http, http-tests/test-available-slots-pagination.http\""
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -29,17 +34,20 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "moment": "^2.30.1",
+    "nest-commander": "^3.16.1",
     "pg": "^8.14.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "swagger-ui-express": "^5.0.1",
-    "typeorm": "^0.3.21"
+    "typeorm": "^0.3.21",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
     "@types/express": "^4.17.17",
+    "@types/inquirer": "^8.1.3",
     "@types/jest": "^29.5.2",
     "@types/node": "^20.3.1",
     "@types/supertest": "^6.0.0",

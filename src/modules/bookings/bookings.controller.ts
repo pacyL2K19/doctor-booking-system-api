@@ -10,20 +10,20 @@ import {
 } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from '../../common/dtos/create-booking.dto';
-import { BookingResponseDto, BookingListDto } from '../../common/dtos/booking-response.dto';
-import { BookingQueryDto } from '../../common/dtos/booking-query.dto';
+import { BookingResponseDto } from '../../common/dtos/booking-response.dto';
 import {
   ApiTags,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiBody,
-  ApiResponse,
-  ApiCreatedResponse,
-  ApiBadRequestResponse,
-  ApiConflictResponse,
-  ApiNotFoundResponse,
 } from '@nestjs/swagger';
+import {
+  ApiStandardResponse,
+  ApiStandardErrorResponse,
+} from '../../common/decorators/api-standard-response.decorator';
+import { PaginatedResult } from '../../common/dtos/pagination.dto';
+import { BookingPaginationQueryDto } from '../../common/dtos/booking-pagination-query.dto';
 
 @ApiTags('bookings')
 @Controller()
@@ -40,13 +40,23 @@ export class BookingsController {
     format: 'uuid',
   })
   @ApiBody({ type: CreateBookingDto })
-  @ApiCreatedResponse({
+  @ApiStandardResponse({
+    status: 201,
     description: 'The slot has been successfully booked.',
     type: BookingResponseDto,
   })
-  @ApiBadRequestResponse({ description: 'Invalid input data.' })
-  @ApiConflictResponse({ description: 'Slot is already booked.' })
-  @ApiNotFoundResponse({ description: 'Slot not found.' })
+  @ApiStandardErrorResponse({
+    status: 400,
+    description: 'Invalid input data.',
+  })
+  @ApiStandardErrorResponse({
+    status: 409,
+    description: 'Slot is already booked.',
+  })
+  @ApiStandardErrorResponse({
+    status: 404,
+    description: 'Slot not found.',
+  })
   async bookSlot(
     @Param('slotId') slotId: string,
     @Body() createBookingDto: CreateBookingDto,
@@ -55,7 +65,10 @@ export class BookingsController {
   }
 
   @Get('doctors/:doctorId/bookings')
-  @ApiOperation({ summary: 'Get all booked appointments for a doctor within a date range' })
+  @ApiOperation({
+    summary:
+      'Get all booked appointments for a doctor within a date range with pagination',
+  })
   @ApiParam({
     name: 'doctorId',
     description: 'The ID of the doctor',
@@ -74,17 +87,40 @@ export class BookingsController {
     required: false,
     type: 'string',
   })
-  @ApiResponse({
-    status: 200,
-    description: 'List of all bookings for the doctor within the specified date range',
-    type: BookingListDto,
+  @ApiQuery({
+    name: 'page',
+    description: 'Page number (1-based indexing)',
+    type: Number,
+    required: false,
+    example: 1,
   })
-  @ApiBadRequestResponse({ description: 'Invalid date format.' })
-  @ApiNotFoundResponse({ description: 'Doctor not found.' })
+  @ApiQuery({
+    name: 'limit',
+    description: 'Number of items per page',
+    type: Number,
+    required: false,
+    example: 10,
+  })
+  @ApiStandardResponse({
+    status: 200,
+    description:
+      'Paginated list of bookings for the doctor within the specified date range',
+    type: BookingResponseDto,
+    isArray: true,
+    isPaginated: true,
+  })
+  @ApiStandardErrorResponse({
+    status: 400,
+    description: 'Invalid date format.',
+  })
+  @ApiStandardErrorResponse({
+    status: 404,
+    description: 'Doctor not found.',
+  })
   async findBookingsByDoctor(
     @Param('doctorId') doctorId: string,
-    @Query() query: BookingQueryDto,
-  ): Promise<BookingListDto> {
+    @Query() query: BookingPaginationQueryDto,
+  ): Promise<PaginatedResult<BookingResponseDto>> {
     return this.bookingsService.findBookingsByDoctor(doctorId, query);
   }
-} 
+}
