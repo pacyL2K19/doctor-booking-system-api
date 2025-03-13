@@ -1,0 +1,77 @@
+### Test Slot Creation with Valid 3-Month Range
+POST http://localhost:3000/doctors/1/slots
+Content-Type: application/json
+
+{
+  "start_time": "{{$isoDate}}T09:00:00.000Z",
+  "end_time": "{{$isoDate}}T17:00:00.000Z",
+  "slot_duration": 30,
+  "recurrence_type": "WEEKLY",
+  "days_of_week": [1, 2, 3, 4, 5],
+  "until": "{{$isoDate 'P2M'}}"
+}
+
+### Test Slot Creation with Invalid Range (> 3 months)
+POST http://localhost:3000/doctors/1/slots
+Content-Type: application/json
+
+{
+  "start_time": "{{$isoDate}}T09:00:00.000Z",
+  "end_time": "{{$isoDate}}T17:00:00.000Z",
+  "slot_duration": 30,
+  "recurrence_type": "WEEKLY",
+  "days_of_week": [1, 2, 3, 4, 5],
+  "until": "{{$isoDate 'P4M'}}"
+}
+
+### Test Slot Creation with Exactly 3 Months (should pass)
+POST http://localhost:3000/doctors/1/slots
+Content-Type: application/json
+
+{
+  "start_time": "{{$isoDate}}T09:00:00.000Z",
+  "end_time": "{{$isoDate}}T17:00:00.000Z",
+  "slot_duration": 30,
+  "recurrence_type": "WEEKLY",
+  "days_of_week": [1, 2, 3, 4, 5],
+  "until": "{{$isoDate 'P3M'}}"
+}
+
+### Test Slot Creation with Valid Time Range (within 24 hours)
+POST http://localhost:3000/doctors/1/slots
+Content-Type: application/json
+
+{
+  "start_time": "{{$isoDate}}T09:00:00.000Z",
+  "end_time": "{{$isoDate}}T19:00:00.000Z",
+  "slot_duration": 30,
+  "recurrence_type": "WEEKLY",
+  "days_of_week": [1, 2, 3, 4, 5],
+  "until": "{{$isoDate 'P1M'}}"
+}
+
+### Test Slot Creation with Invalid Time Range (> 24 hours)
+POST http://localhost:3000/doctors/1/slots
+Content-Type: application/json
+
+{
+  "start_time": "{{$isoDate}}T09:00:00.000Z",
+  "end_time": "{{$isoDate 'P1D'}}T10:00:00.000Z",
+  "slot_duration": 30,
+  "recurrence_type": "WEEKLY",
+  "days_of_week": [1, 2, 3, 4, 5],
+  "until": "{{$isoDate 'P1M'}}"
+}
+
+### Test Slot Creation with Exactly 24 Hours (should pass)
+POST http://localhost:3000/doctors/1/slots
+Content-Type: application/json
+
+{
+  "start_time": "{{$isoDate}}T09:00:00.000Z",
+  "end_time": "{{$isoDate 'P1D'}}T09:00:00.000Z",
+  "slot_duration": 30,
+  "recurrence_type": "WEEKLY",
+  "days_of_week": [1, 2, 3, 4, 5],
+  "until": "{{$isoDate 'P1M'}}"
+} 

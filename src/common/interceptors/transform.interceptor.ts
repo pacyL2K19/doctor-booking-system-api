@@ -56,7 +56,7 @@ export class TransformInterceptor<T>
           'meta' in data
         ) {
           const paginatedData = data as unknown as PaginatedResult<any>;
-          
+
           // Transform to paginated API response
           return {
             success: true,

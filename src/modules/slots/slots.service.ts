@@ -61,6 +61,23 @@ export class SlotsService {
       throw new BadRequestException('End date must be after start date');
     }
 
+    // Validate that start_time and end_time are within 24 hours
+    const timeDifferenceHours =
+      (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
+    if (timeDifferenceHours > 24) {
+      throw new BadRequestException(
+        'Time range between start_time and end_time cannot exceed 24 hours for recurrence rules',
+      );
+    }
+
+    // Validate maximum recurrence duration (3 months)
+    const threeMonthsFromStart = moment(startTime).add(3, 'months').toDate();
+    if (until > threeMonthsFromStart) {
+      throw new BadRequestException(
+        'Recurrence duration cannot exceed 3 months. Please set an end date within 3 months of the start date.',
+      );
+    }
+
     // Validate slot duration
     if (
       createSlotsDto.slot_duration !== 15 &&
@@ -105,7 +122,7 @@ export class SlotsService {
       until,
     });
 
-    // Use transaction to ensure all operations succeed or fail together
+    // Let's use transaction to ensure all operations succeed or fail together
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();

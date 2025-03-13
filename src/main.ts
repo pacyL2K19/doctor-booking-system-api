@@ -22,6 +22,12 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
   const port = configService.get('PORT', 3000);
+  const environment = configService.get('NODE_ENV', 'development');
+
+  const isProduction = environment === 'production';
+  const hostUrl = isProduction
+    ? 'https://doctor-booking-system-api.onrender.com'
+    : `http://localhost:${port}`;
 
   // Global ValidationPipe setup
   app.useGlobalPipes(
@@ -73,9 +79,10 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   await app.listen(port);
-  console.log(`Application is running on: http://localhost:${port}`);
-  console.log(
-    `Swagger documentation is available at: http://localhost:${port}/api`,
-  );
+
+  // Log appropriate URLs based on environment
+  console.log(`Application is running in ${environment} mode`);
+  console.log(`API is available at: ${hostUrl}`);
+  console.log(`Swagger documentation is available at: ${hostUrl}/api`);
 }
 bootstrap();
