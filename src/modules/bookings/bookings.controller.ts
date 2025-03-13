@@ -10,11 +10,7 @@ import {
 } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from '../../common/dtos/create-booking.dto';
-import {
-  BookingResponseDto,
-  BookingListDto,
-} from '../../common/dtos/booking-response.dto';
-import { BookingQueryDto } from '../../common/dtos/booking-query.dto';
+import { BookingResponseDto } from '../../common/dtos/booking-response.dto';
 import {
   ApiTags,
   ApiOperation,
@@ -26,6 +22,8 @@ import {
   ApiStandardResponse,
   ApiStandardErrorResponse,
 } from '../../common/decorators/api-standard-response.decorator';
+import { PaginatedResult } from '../../common/dtos/pagination.dto';
+import { BookingPaginationQueryDto } from '../../common/dtos/booking-pagination-query.dto';
 
 @ApiTags('bookings')
 @Controller()
@@ -68,7 +66,8 @@ export class BookingsController {
 
   @Get('doctors/:doctorId/bookings')
   @ApiOperation({
-    summary: 'Get all booked appointments for a doctor within a date range',
+    summary:
+      'Get all booked appointments for a doctor within a date range with pagination',
   })
   @ApiParam({
     name: 'doctorId',
@@ -88,11 +87,27 @@ export class BookingsController {
     required: false,
     type: 'string',
   })
+  @ApiQuery({
+    name: 'page',
+    description: 'Page number (1-based indexing)',
+    type: Number,
+    required: false,
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    description: 'Number of items per page',
+    type: Number,
+    required: false,
+    example: 10,
+  })
   @ApiStandardResponse({
     status: 200,
     description:
-      'List of all bookings for the doctor within the specified date range',
-    type: BookingListDto,
+      'Paginated list of bookings for the doctor within the specified date range',
+    type: BookingResponseDto,
+    isArray: true,
+    isPaginated: true,
   })
   @ApiStandardErrorResponse({
     status: 400,
@@ -104,8 +119,8 @@ export class BookingsController {
   })
   async findBookingsByDoctor(
     @Param('doctorId') doctorId: string,
-    @Query() query: BookingQueryDto,
-  ): Promise<BookingListDto> {
+    @Query() query: BookingPaginationQueryDto,
+  ): Promise<PaginatedResult<BookingResponseDto>> {
     return this.bookingsService.findBookingsByDoctor(doctorId, query);
   }
 }

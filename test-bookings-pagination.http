@@ -1,0 +1,19 @@
+### Test the bookings pagination API
+GET http://localhost:3000/doctors/{{doctorId}}/bookings
+Accept: application/json
+
+### Test with explicit pagination parameters
+GET http://localhost:3000/doctors/{{doctorId}}/bookings?page=1&limit=5
+Accept: application/json
+
+### Test with date range and pagination
+GET http://localhost:3000/doctors/{{doctorId}}/bookings?start_date=2023-01-01&end_date=2023-12-31&page=1&limit=10
+Accept: application/json
+
+### Test with start date only
+GET http://localhost:3000/doctors/{{doctorId}}/bookings?start_date=2023-01-01&page=2
+Accept: application/json
+
+### Test with end date only
+GET http://localhost:3000/doctors/{{doctorId}}/bookings?end_date=2023-12-31&limit=3
+Accept: application/json 

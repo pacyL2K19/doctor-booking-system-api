@@ -20,12 +20,14 @@ import {
   SlotsResponseDto,
   SlotSummary,
 } from '../../common/dtos/slots-response.dto';
-import {
-  AvailableSlotsResponseDto,
-  // SlotTimeInfo,
-} from '../../common/dtos/available-slots-response.dto';
 import { DoctorsService } from '../doctors/doctors.service';
 import * as moment from 'moment';
+import {
+  PaginationDto,
+  PaginatedResult,
+  createPaginationMeta,
+} from '../../common/dtos/pagination.dto';
+import { AvailableSlotsQueryDto } from '../../common/dtos/available-slots-query.dto';
 
 @Injectable()
 export class SlotsService {
@@ -200,26 +202,41 @@ export class SlotsService {
     }
   }
 
-  async findSlotsByDoctor(doctorId: string): Promise<Slot[]> {
+  async findSlotsByDoctor(
+    doctorId: string,
+    paginationDto: PaginationDto,
+  ): Promise<PaginatedResult<Slot>> {
     // Check if doctor exists
     await this.doctorsService.findOne(doctorId);
 
-    return this.slotsRepository.find({
+    const { page, limit } = paginationDto;
+    const skip = (page - 1) * limit;
+
+    const [slots, total] = await this.slotsRepository.findAndCount({
       where: { doctor_id: doctorId },
       order: { start_time: 'ASC' },
+      skip,
+      take: limit,
     });
+
+    return {
+      items: slots,
+      meta: createPaginationMeta(total, paginationDto),
+    };
   }
 
   /**
    * Find all available slots for a doctor on a specific date
    * @param doctorId The ID of the doctor
    * @param date The date to check for available slots (YYYY-MM-DD)
-   * @returns A structured response with all available slots for the doctor on the specified date
+   * @param query Query parameters including pagination and date
+   * @returns A structured response with paginated available slots for the doctor on the specified date
    */
   async findAvailableSlotsByDoctor(
     doctorId: string,
     date: string,
-  ): Promise<AvailableSlotsResponseDto> {
+    query: AvailableSlotsQueryDto,
+  ): Promise<PaginatedResult<Slot>> {
     // Check if doctor exists
     await this.doctorsService.findOne(doctorId);
 
@@ -232,7 +249,10 @@ export class SlotsService {
     const startOfDay = searchDate.startOf('day').toDate();
     const endOfDay = searchDate.endOf('day').toDate();
 
-    const availableSlots = await this.slotsRepository.find({
+    const { page, limit } = query;
+    const skip = (page - 1) * limit;
+
+    const [availableSlots, total] = await this.slotsRepository.findAndCount({
       where: {
         doctor_id: doctorId,
         status: SlotStatus.AVAILABLE,
@@ -240,22 +260,13 @@ export class SlotsService {
         end_time: LessThanOrEqual(endOfDay),
       },
       order: { start_time: 'ASC' },
+      skip,
+      take: limit,
     });
 
-    // Map to a more structured response
-    const slots = availableSlots.map((slot) => ({
-      id: slot.id,
-      doctor_id: slot.doctor_id,
-      start_time: slot.start_time,
-      end_time: slot.end_time,
-      recurrence_id: slot.recurrence_id,
-    }));
-
     return {
-      date: searchDate.format('YYYY-MM-DD'),
-      doctor_id: doctorId,
-      total_slots: slots.length,
-      slots,
+      items: availableSlots,
+      meta: createPaginationMeta(total, query),
     };
   }
 

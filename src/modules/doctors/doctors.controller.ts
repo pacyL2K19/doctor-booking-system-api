@@ -6,15 +6,26 @@ import {
   Param,
   HttpStatus,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { DoctorsService } from './doctors.service';
 import { CreateDoctorDto } from '../../common/dtos/create-doctor.dto';
 import { Doctor } from '../../common/entities/doctor.entity';
-import { ApiTags, ApiOperation, ApiParam, ApiBody } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiParam,
+  ApiBody,
+  ApiQuery,
+} from '@nestjs/swagger';
 import {
   ApiStandardResponse,
   ApiStandardErrorResponse,
 } from '../../common/decorators/api-standard-response.decorator';
+import {
+  PaginationDto,
+  PaginatedResult,
+} from '../../common/dtos/pagination.dto';
 
 @ApiTags('doctors')
 @Controller('doctors')
@@ -43,15 +54,32 @@ export class DoctorsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all doctors' })
+  @ApiOperation({ summary: 'Get all doctors with pagination' })
+  @ApiQuery({
+    name: 'page',
+    description: 'Page number (1-based indexing)',
+    type: Number,
+    required: false,
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    description: 'Number of items per page',
+    type: Number,
+    required: false,
+    example: 10,
+  })
   @ApiStandardResponse({
     status: 200,
-    description: 'List of all doctors',
+    description: 'Paginated list of doctors',
     type: Doctor,
     isArray: true,
+    isPaginated: true,
   })
-  async findAll(): Promise<Doctor[]> {
-    return this.doctorsService.findAll();
+  async findAll(
+    @Query() paginationDto: PaginationDto,
+  ): Promise<PaginatedResult<Doctor>> {
+    return this.doctorsService.findAll(paginationDto);
   }
 
   @Get(':id')

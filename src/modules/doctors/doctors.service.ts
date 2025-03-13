@@ -7,6 +7,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Doctor } from '../../common/entities/doctor.entity';
 import { CreateDoctorDto } from '../../common/dtos/create-doctor.dto';
+import {
+  PaginationDto,
+  PaginatedResult,
+  createPaginationMeta,
+} from '../../common/dtos/pagination.dto';
 
 @Injectable()
 export class DoctorsService {
@@ -46,8 +51,21 @@ export class DoctorsService {
     }
   }
 
-  async findAll(): Promise<Doctor[]> {
-    return this.doctorsRepository.find();
+  async findAll(
+    paginationDto: PaginationDto,
+  ): Promise<PaginatedResult<Doctor>> {
+    const { page, limit } = paginationDto;
+    const skip = (page - 1) * limit;
+
+    const [doctors, total] = await this.doctorsRepository.findAndCount({
+      skip,
+      take: limit,
+    });
+
+    return {
+      items: doctors,
+      meta: createPaginationMeta(total, paginationDto),
+    };
   }
 
   async findOne(id: string): Promise<Doctor> {

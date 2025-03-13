@@ -1,5 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Header, Res } from '@nestjs/common';
 import { AppService } from './app.service';
+import { Response } from 'express';
 
 @Controller()
 export class AppController {
@@ -13,5 +14,12 @@ export class AppController {
   @Get('health')
   getHealth() {
     return this.appService.getHealth();
+  }
+
+  @Get('service-worker.js')
+  @Header('Content-Type', 'application/javascript')
+  getServiceWorker(@Res() res: Response): void {
+    // Return an empty service worker file
+    res.send('// Empty service worker');
   }
 }

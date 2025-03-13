@@ -132,13 +132,27 @@ export class PaginationMetaSchema {
 }
 
 /**
- * Swagger schema for paginated API response
+ * Swagger schema for paginated data
  * @template T - The type of items in the paginated list
  */
-export class PaginatedApiResponseSchema<T> extends ApiResponseSchema<T[]> {
+export class PaginatedDataSchema<T> {
+  @ApiProperty({
+    description: 'List of items',
+    isArray: true,
+  })
+  items: T[];
+
   @ApiProperty({
     description: 'Pagination metadata',
     type: PaginationMetaSchema,
   })
-  pagination: PaginationMetaSchema;
+  paginationInfo: PaginationMetaSchema;
+}
+
+/**
+ * Swagger schema for paginated API response
+ * @template T - The type of items in the paginated list
+ */
+export class PaginatedApiResponseSchema<T> extends ApiResponseSchema<PaginatedDataSchema<T>> {
+  // This now extends ApiResponseSchema with PaginatedDataSchema as the generic type
 }

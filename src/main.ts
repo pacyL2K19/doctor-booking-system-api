@@ -13,6 +13,7 @@ import {
   PaginationMetaSchema,
   ErrorDetailsSchema,
 } from './common/schemas/api-response.schema';
+import { PaginationDto, PaginationMeta } from './common/dtos/pagination.dto';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -61,6 +62,8 @@ async function bootstrap() {
       PaginatedApiResponseSchema,
       PaginationMetaSchema,
       ErrorDetailsSchema,
+      PaginationDto,
+      PaginationMeta,
     ],
   });
 

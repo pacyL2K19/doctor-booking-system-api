@@ -1,0 +1,15 @@
+### Test the available slots pagination API
+GET http://localhost:3000/doctors/{{doctorId}}/available_slots?date=2023-03-13
+Accept: application/json
+
+### Test with explicit pagination parameters
+GET http://localhost:3000/doctors/{{doctorId}}/available_slots?date=2023-03-13&page=1&limit=5
+Accept: application/json
+
+### Test with page parameter only
+GET http://localhost:3000/doctors/{{doctorId}}/available_slots?date=2023-03-13&page=2
+Accept: application/json
+
+### Test with limit parameter only
+GET http://localhost:3000/doctors/{{doctorId}}/available_slots?date=2023-03-13&limit=3
+Accept: application/json 

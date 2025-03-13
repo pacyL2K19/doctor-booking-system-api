@@ -4,12 +4,17 @@ import {
   ApiOkResponse,
   ApiCreatedResponse,
   ApiResponseOptions,
+  ApiBadGatewayResponse,
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiInternalServerErrorResponse,
   getSchemaPath,
 } from '@nestjs/swagger';
 import {
   ApiResponseSchema,
   ApiErrorResponseSchema,
   PaginatedApiResponseSchema,
+  PaginationMetaSchema,
 } from '../schemas/api-response.schema';
 
 /**
@@ -39,28 +44,53 @@ export function ApiStandardResponse(options: ApiStandardResponseOptions = {}) {
     : ApiResponseSchema;
 
   // Define the schema based on our ApiResponse interface
-  const schema = {
-    allOf: [
-      { $ref: getSchemaPath(baseSchemaClass) },
-      {
-        properties: {
-          data: isArray
-            ? {
-                type: 'array',
-                items: { $ref: getSchemaPath(responseType) },
-              }
-            : { $ref: getSchemaPath(responseType) },
+  let schema;
+
+  if (isPaginated) {
+    schema = {
+      allOf: [
+        { $ref: getSchemaPath(baseSchemaClass) },
+        {
+          properties: {
+            data: {
+              properties: {
+                items: {
+                  type: 'array',
+                  items: { $ref: getSchemaPath(responseType) },
+                },
+                paginationInfo: {
+                  $ref: getSchemaPath(PaginationMetaSchema),
+                },
+              },
+            },
+          },
         },
-      },
-    ],
-  };
+      ],
+    };
+  } else {
+    schema = {
+      allOf: [
+        { $ref: getSchemaPath(baseSchemaClass) },
+        {
+          properties: {
+            data: isArray
+              ? {
+                  type: 'array',
+                  items: { $ref: getSchemaPath(responseType) },
+                }
+              : { $ref: getSchemaPath(responseType) },
+          },
+        },
+      ],
+    };
+  }
 
   // Choose the appropriate response decorator based on status code
   const responseDecorator =
     options.status === 201 ? ApiCreatedResponse : ApiOkResponse;
 
   return applyDecorators(
-    ApiExtraModels(baseSchemaClass, responseType),
+    ApiExtraModels(baseSchemaClass, responseType, PaginationMetaSchema),
     responseDecorator({
       ...rest,
       schema,
@@ -74,9 +104,20 @@ export function ApiStandardResponse(options: ApiStandardResponseOptions = {}) {
  * @returns Decorator that documents the standard error response format
  */
 export function ApiStandardErrorResponse(options: ApiResponseOptions = {}) {
+  const ResponseDecorator =
+    options.status === 400
+      ? ApiBadRequestResponse
+      : options.status === 404
+        ? ApiNotFoundResponse
+        : options.status === 500
+          ? ApiInternalServerErrorResponse
+          : options.status === 502
+            ? ApiBadGatewayResponse
+            : ApiOkResponse;
+
   return applyDecorators(
     ApiExtraModels(ApiErrorResponseSchema),
-    ApiOkResponse({
+    ResponseDecorator({
       ...options,
       schema: {
         $ref: getSchemaPath(ApiErrorResponseSchema),

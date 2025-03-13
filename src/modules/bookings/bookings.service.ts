@@ -9,13 +9,16 @@ import { Booking } from '../../common/entities/booking.entity';
 import { CreateBookingDto } from '../../common/dtos/create-booking.dto';
 import {
   BookingResponseDto,
-  BookingListDto,
   BookingSlotDetails,
 } from '../../common/dtos/booking-response.dto';
-import { BookingQueryDto } from '../../common/dtos/booking-query.dto';
 import { SlotsService } from '../slots/slots.service';
 import { SlotStatus } from '../../common/entities/slot.entity';
 import * as moment from 'moment';
+import {
+  PaginatedResult,
+  createPaginationMeta,
+} from '../../common/dtos/pagination.dto';
+import { BookingPaginationQueryDto } from '../../common/dtos/booking-pagination-query.dto';
 
 @Injectable()
 export class BookingsService {
@@ -76,13 +79,13 @@ export class BookingsService {
   }
 
   /**
-   * Get all bookings for a specific doctor within a date range
+   * Get all bookings for a specific doctor within a date range with pagination
    * Optimized query with proper indexing on foreign keys and dates
    */
   async findBookingsByDoctor(
     doctorId: string,
-    query: BookingQueryDto,
-  ): Promise<BookingListDto> {
+    query: BookingPaginationQueryDto,
+  ): Promise<PaginatedResult<BookingResponseDto>> {
     // Validate date range
     let startDate = null;
     let endDate = null;
@@ -105,31 +108,41 @@ export class BookingsService {
       throw new BadRequestException('Start date must be before end date');
     }
 
-    // Create the slot join query
-    const bookings = await this.bookingsRepository
+    const { page, limit } = query;
+    const skip = (page - 1) * limit;
+
+    // Create the query builder
+    const queryBuilder = this.bookingsRepository
       .createQueryBuilder('booking')
       .innerJoinAndSelect('booking.slot', 'slot')
-      .where('slot.doctor_id = :doctorId', { doctorId })
-      .andWhere(
-        startDate && endDate
-          ? 'slot.start_time BETWEEN :startDate AND :endDate'
-          : startDate
-            ? 'slot.start_time >= :startDate'
-            : endDate
-              ? 'slot.start_time <= :endDate'
-              : '1=1', // Always true if no dates provided
-        {
-          startDate,
-          endDate,
-        },
-      )
-      .orderBy('slot.start_time', 'ASC')
-      .getMany();
+      .where('slot.doctor_id = :doctorId', { doctorId });
 
-    // Map to response DTO
+    // Add date filters if provided
+    if (startDate && endDate) {
+      queryBuilder.andWhere('slot.start_time BETWEEN :startDate AND :endDate', {
+        startDate,
+        endDate,
+      });
+    } else if (startDate) {
+      queryBuilder.andWhere('slot.start_time >= :startDate', { startDate });
+    } else if (endDate) {
+      queryBuilder.andWhere('slot.start_time <= :endDate', { endDate });
+    }
+
+    // Add pagination
+    queryBuilder.orderBy('slot.start_time', 'ASC').skip(skip).take(limit);
+
+    // Get paginated results and total count
+    const [bookings, total] = await queryBuilder.getManyAndCount();
+
+    // Map to response DTOs
+    const bookingDtos = bookings.map((booking) =>
+      this.mapToBookingResponse(booking),
+    );
+
     return {
-      bookings: bookings.map((booking) => this.mapToBookingResponse(booking)),
-      total: bookings.length,
+      items: bookingDtos,
+      meta: createPaginationMeta(total, query),
     };
   }
 
