@@ -1,0 +1,7 @@
+### Test the health check endpoint
+GET http://localhost:3000/health
+Accept: application/json
+
+### Test the root endpoint
+GET http://localhost:3000
+Accept: application/json 

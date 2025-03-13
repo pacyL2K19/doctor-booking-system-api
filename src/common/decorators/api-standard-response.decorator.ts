@@ -104,7 +104,7 @@ export function ApiStandardResponse(options: ApiStandardResponseOptions = {}) {
  * @returns Decorator that documents the standard error response format
  */
 export function ApiStandardErrorResponse(options: ApiResponseOptions = {}) {
-  const ResponseDecorator =
+  const responseDecorator =
     options.status === 400
       ? ApiBadRequestResponse
       : options.status === 404
@@ -117,7 +117,7 @@ export function ApiStandardErrorResponse(options: ApiResponseOptions = {}) {
 
   return applyDecorators(
     ApiExtraModels(ApiErrorResponseSchema),
-    ResponseDecorator({
+    responseDecorator({
       ...options,
       schema: {
         $ref: getSchemaPath(ApiErrorResponseSchema),
