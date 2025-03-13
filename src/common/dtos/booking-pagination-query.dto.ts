@@ -26,4 +26,4 @@ export class BookingPaginationQueryDto extends PaginationDto {
   @IsDateString()
   @Type(() => String)
   end_date?: string;
-} 
+}
