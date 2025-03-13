@@ -30,7 +30,7 @@ COPY --from=development /app/dist ./dist
 COPY --from=development /app/node_modules ./node_modules
 
 # Expose the port
-EXPOSE 3000
+EXPOSE 8080
 
 # Start the application in production mode
 CMD ["node", "dist/main"]

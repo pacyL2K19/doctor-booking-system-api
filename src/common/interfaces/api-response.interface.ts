@@ -1,8 +1,4 @@
-/**
- * Standard API response structure for success responses
- * @template T - The type of data being returned
- */
-export interface ApiResponse<T> {
+export interface BaseResponse {
   /**
    * Status of the response (always true for successful responses)
    */
@@ -14,7 +10,7 @@ export interface ApiResponse<T> {
   code: number;
 
   /**
-   * Human-readable message describing the response
+   * A human-readable message to describe the response
    */
   message: string;
 
@@ -22,9 +18,15 @@ export interface ApiResponse<T> {
    * Optional timestamp of when the response was generated
    */
   timestamp: string;
+}
 
+/**
+ * Standard API response structure for success responses
+ * @template T - The type of data being returned
+ */
+export interface ApiResponse<T> extends BaseResponse {
   /**
-   * The actual data returned by the API
+   * The actual data returned by the API - can be any objectLiteral or primitive type
    */
   data: T;
 }
@@ -32,27 +34,7 @@ export interface ApiResponse<T> {
 /**
  * Standard API response structure for error responses
  */
-export interface ApiErrorResponse {
-  /**
-   * Status of the response (always false for error responses)
-   */
-  success: boolean;
-
-  /**
-   * Error code (typically HTTP status code)
-   */
-  code: number;
-
-  /**
-   * Human-readable error message
-   */
-  message: string;
-
-  /**
-   * Optional timestamp of when the error occurred
-   */
-  timestamp: string;
-
+export interface ApiErrorResponse extends BaseResponse {
   /**
    * Detailed error information (optional)
    */

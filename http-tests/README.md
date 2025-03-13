@@ -16,4 +16,4 @@ This directory contains HTTP test files that can be used to test the API endpoin
 
 ## Variables
 
-Some of the test files use variables (e.g., `{{doctorId}}`). You'll need to replace these with actual values or set up an environment file for your REST client extension. 
+Some of the test files use variables (e.g., `{{doctorId}}`). You'll need to replace these with actual values or set up an environment file for your REST client extension.

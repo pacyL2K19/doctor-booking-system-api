@@ -153,6 +153,8 @@ export class PaginatedDataSchema<T> {
  * Swagger schema for paginated API response
  * @template T - The type of items in the paginated list
  */
-export class PaginatedApiResponseSchema<T> extends ApiResponseSchema<PaginatedDataSchema<T>> {
+export class PaginatedApiResponseSchema<T> extends ApiResponseSchema<
+  PaginatedDataSchema<T>
+> {
   // This now extends ApiResponseSchema with PaginatedDataSchema as the generic type
 }
