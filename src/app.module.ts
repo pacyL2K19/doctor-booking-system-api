@@ -24,7 +24,6 @@ import { BookingsModule } from './modules/bookings/bookings.module';
         database: configService.get('DATABASE_NAME', 'doctor_booking'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: configService.get('NODE_ENV') !== 'production',
-        // Use the custom UUID generator
         entitySkipConstructor: true,
       }),
     }),
